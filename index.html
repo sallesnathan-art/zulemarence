@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zulemarence - Wikipedia</title>
+  <style>
+    :root {
+      --wiki-bg: #f8f9fa;
+      --wiki-border: #a2a9b1;
+      --wiki-link: #0645ad;
+      --wiki-link-visited: #0b0080;
+      --wiki-header-bg: #fff;
+      --wiki-infobox-bg: #f8f9fa;
+      --wiki-toc-bg: #f8f9fa;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Linux Libertine", "Georgia", "Times", serif;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #202122;
+      background: #fff;
+      max-width: 100%;
+    }
+    a { color: var(--wiki-link); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    a:visited { color: var(--wiki-link-visited); }
+
+    /* Header */
+    .mw-header {
+      background: var(--wiki-header-bg);
+      border-bottom: 1px solid var(--wiki-border);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .mw-logo {
+      font-family: "Linux Libertine", Georgia, serif;
+      font-size: 1.4rem;
+      font-weight: normal;
+      color: #000;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .mw-logo span.globe {
+      font-size: 1.6rem;
+    }
+    .mw-search {
+      flex: 1;
+      max-width: 400px;
+      display: flex;
+    }
+    .mw-search input {
+      flex: 1;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--wiki-border);
+      border-right: none;
+      font-size: 0.9rem;
+      border-radius: 2px 0 0 2px;
+    }
+    .mw-search button {
+      padding: 0.4rem 0.8rem;
+      background: #36c;
+      color: white;
+      border: 1px solid #36c;
+      border-radius: 0 2px 2px 0;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    .mw-userlinks {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: #54595d;
+    }
+
+    /* Main layout */
+    .mw-body {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem;
+      gap: 1.5rem;
+    }
+    .mw-content {
+      flex: 1;
+      min-width: 0;
+    }
+    .mw-sidebar {
+      width: 180px;
+      flex-shrink: 0;
+      font-size: 0.85rem;
+    }
+    .mw-sidebar h3 {
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--wiki-border);
+      padding-bottom: 0.2rem;
+      margin: 1rem 0 0.4rem;
+      color: #54595d;
+    }
+    .mw-sidebar ul {
+      list-style: none;
+      padding-left: 0.2rem;
+    }
+    .mw-sidebar li { margin: 0.15rem 0; }
+
+    /* Article header */
+    .firstHeading {
+      font-family: "Linux Libertine", Georgia, Times, serif;
+      font-size: 1.8rem;
+      font-weight: normal;
+      border-bottom: 1px solid var(--wiki-border);
+      padding-bottom: 0.2rem;
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+    .mw-indicators {
+      float: right;
+      font-size: 0.8rem;
+      color: #54595d;
+    }
+    .siteSub {
+      font-size: 0.85rem;
+      color: #54595d;
+      margin-bottom: 1rem;
+    }
+
+    /* Infobox */
+    .infobox {
+      float: right;
+      clear: right;
+      width: 280px;
+      margin: 0 0 1rem 1.2rem;
+      background: var(--wiki-infobox-bg);
+      border: 1px solid var(--wiki-border);
+      border-spacing: 0;
+      font-size: 0.88rem;
+      line-height: 1.4;
+    }
+    .infobox th {
+      background: #eaecf0;
+      text-align: center;
+      font-weight: bold;
+      padding: 0.4rem;
+      border-bottom: 1px solid var(--wiki-border);
+    }
+    .infobox td, .infobox th {
+      padding: 0.3rem 0.5rem;
+      vertical-align: top;
+    }
+    .infobox .label {
+      font-weight: bold;
+      width: 40%;
+      background: #f8f9fa;
+    }
+    .infobox img {
+      display: block;
+      margin: 0.4rem auto;
+      max-width: 100%;
+    }
+
+    /* TOC */
+    .toc {
+      background: var(--wiki-toc-bg);
+      border: 1px solid var(--wiki-border);
+      padding: 0.8rem 1rem;
+      margin: 1rem 0;
+      display: inline-block;
+      min-width: 200px;
+      font-size: 0.9rem;
+    }
+    .toc .toctitle {
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 0.4rem;
+    }
+    .toc ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .toc > ul > li { margin: 0.2rem 0; }
+    .toc ul ul {
+      padding-left: 1.2rem;
+      margin-top: 0.1rem;
+    }
+    .tocnumber { color: #202122; margin-right: 0.3rem; }
+
+    /* Content */
+    .mw-parser-output p {
+      margin: 0.6rem 0;
+    }
+    .mw-parser-output h2 {
+      font-family: "Linux Libertine", Georgia, Times, serif;
+      font-size: 1.4rem;
+      font-weight: normal;
+      border-bottom: 1px solid var(--wiki-border);
+      margin: 1.4rem 0 0.5rem;
+      padding-bottom: 0.15rem;
+    }
+    .mw-parser-output h3 {
+      font-family: "Linux Libertine", Georgia, Times, serif;
+      font-size: 1.15rem;
+      font-weight: bold;
+      margin: 1rem 0 0.4rem;
+    }
+    .mw-parser-output ul, .mw-parser-output ol {
+      margin: 0.5rem 0 0.5rem 1.6rem;
+    }
+    .mw-parser-output li { margin: 0.2rem 0; }
+    .mw-parser-output blockquote {
+      border-left: 3px solid #a2a9b1;
+      margin: 0.8rem 0 0.8rem 1rem;
+      padding-left: 1rem;
+      color: #202122;
+      font-style: italic;
+    }
+    .hatnote {
+      font-style: italic;
+      color: #54595d;
+      margin: 0.4rem 0 0.8rem;
+      font-size: 0.9rem;
+    }
+    .reference {
+      font-size: 0.75rem;
+      vertical-align: super;
+      line-height: 1;
+    }
+    .reflist {
+      font-size: 0.9rem;
+      columns: 2;
+      column-gap: 2rem;
+    }
+    .reflist ol {
+      margin-left: 1.4rem;
+    }
+    .mw-editsection {
+      font-size: 0.75rem;
+      font-weight: normal;
+      margin-left: 0.5rem;
+      color: #54595d;
+    }
+    .mw-editsection a { color: #54595d; }
+
+    /* Footer */
+    .mw-footer {
+      border-top: 1px solid var(--wiki-border);
+      margin-top: 2rem;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: #54595d;
+      background: #f8f9fa;
+      text-align: center;
+    }
+    .catlinks {
+      border: 1px solid var(--wiki-border);
+      background: #f8f9fa;
+      padding: 0.5rem 0.8rem;
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+    }
+    .catlinks a { margin-right: 0.5rem; }
+
+    /* Print / small screens */
+    @media (max-width: 800px) {
+      .mw-body { flex-direction: column; }
+      .mw-sidebar { width: 100%; order: 2; }
+      .infobox { float: none; width: 100%; margin: 0 0 1rem 0; }
+      .reflist { columns: 1; }
+    }
+
+    /* Fake "from Wikipedia" banner */
+    .wiki-banner {
+      background: #eaecf0;
+      border-bottom: 1px solid var(--wiki-border);
+      padding: 0.3rem 1rem;
+      font-size: 0.8rem;
+      color: #54595d;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="wiki-banner">
+    This is a personal, unofficial Wikipedia-style page created to formally coin and document the term <strong>Zulemarence</strong>. It is not affiliated with the Wikimedia Foundation.
+  </div>
+
+  <header class="mw-header">
+    <div class="mw-logo">
+      <span class="globe">🌐</span>
+      <span>Wikipedia</span>
+    </div>
+    <div class="mw-search">
+      <input type="text" placeholder="Search Wikipedia" value="Zulemarence" readonly>
+      <button>Search</button>
+    </div>
+    <div class="mw-userlinks">
+      Not logged in &nbsp;|&nbsp; Talk &nbsp;|&nbsp; Contributions &nbsp;|&nbsp; Create account &nbsp;|&nbsp; Log in
+    </div>
+  </header>
+
+  <div class="mw-body">
+    <nav class="mw-sidebar">
+      <h3>Navigation</h3>
+      <ul>
+        <li><a href="#">Main page</a></li>
+        <li><a href="#">Contents</a></li>
+        <li><a href="#">Current events</a></li>
+        <li><a href="#">Random article</a></li>
+        <li><a href="#">About Wikipedia</a></li>
+        <li><a href="#">Contact us</a></li>
+      </ul>
+      <h3>Contribute</h3>
+      <ul>
+        <li><a href="#">Help</a></li>
+        <li><a href="#">Learn to edit</a></li>
+        <li><a href="#">Community portal</a></li>
+        <li><a href="#">Recent changes</a></li>
+        <li><a href="#">Upload file</a></li>
+      </ul>
+      <h3>Tools</h3>
+      <ul>
+        <li><a href="#">What links here</a></li>
+        <li><a href="#">Related changes</a></li>
+        <li><a href="#">Special pages</a></li>
+        <li><a href="#">Permanent link</a></li>
+        <li><a href="#">Page information</a></li>
+      </ul>
+      <h3>Languages</h3>
+      <ul>
+        <li><a href="#">English</a></li>
+        <li style="color:#999;">Add languages</li>
+      </ul>
+    </nav>
+
+    <main class="mw-content">
+      <div class="mw-indicators">
+        <span title="This is a featured-style personal article">⭐ From the personal encyclopedia</span>
+      </div>
+
+      <h1 class="firstHeading" id="firstHeading">Zulemarence</h1>
+      <div class="siteSub">From Wikipedia, the free encyclopedia</div>
+
+      <div class="hatnote">This article is about the coined emotional state. For the related psychological concept, see <a href="https://en.wikipedia.org/wiki/Limerence">Limerence</a>.</div>
+
+      <!-- Infobox -->
+      <table class="infobox">
+        <tr>
+          <th colspan="2">Zulemarence</th>
+        </tr>
+        <tr>
+          <td colspan="2" style="text-align:center; padding:0.6rem; background:#fff;">
+            <div style="font-size:2.2rem; line-height:1;">❤️‍🔥</div>
+            <div style="font-size:0.8rem; color:#54595d; margin-top:0.3rem;">The kind of love you only get from Nathan if you marry him</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Pronunciation</td>
+          <td>/zuː.ləˈmɛər.əns/ or /zuː.lə.məˈrɛns/</td>
+        </tr>
+        <tr>
+          <td class="label">Coined by</td>
+          <td>The originator of the defining poem (2026)</td>
+        </tr>
+        <tr>
+          <td class="label">First attested</td>
+          <td>14 October 2026</td>
+        </tr>
+        <tr>
+          <td class="label">Etymology</td>
+          <td>Portmanteau of <em>Zulema</em> + <em>limerence</em></td>
+        </tr>
+        <tr>
+          <td class="label">Related concepts</td>
+          <td>
+            <a href="https://en.wikipedia.org/wiki/Limerence">Limerence</a>,<br>
+            Obsessive love,<br>
+            Romantic addiction
+          </td>
+        </tr>
+        <tr>
+          <td class="label">Defining feature</td>
+          <td>Solemn, lifelong attachment with no separation</td>
+        </tr>
+      </table>
+
+      <div class="mw-parser-output">
+        <p><b>Zulemarence</b> is a coined term for an intense, clinically obsessive form of romantic attachment directed specifically toward one person (the “Zulema object”). It is characterized by the sensation of being physically pushed backward and unable to catch one’s breath, combined with an unquenchable adrenaline-driven compulsion that the sufferer experiences as the only addiction they cannot quit.<sup class="reference"><a href="#cite_note-1">[1]</a></sup></p>
+
+        <p>The term was formally coined on 14 October 2026 in a defining poem that declared:</p>
+
+        <blockquote>
+          “Take a step from Shakespeare coin Zulemarence the kind of Love you Only Get From Nathan If You Marry Him. A solemn swear to never have a separation.”
+        </blockquote>
+
+        <div class="toc">
+          <div class="toctitle">Contents</div>
+          <ul>
+            <li><a href="#Definition"><span class="tocnumber">1</span> Definition</a></li>
+            <li><a href="#Etymology_and_coinage"><span class="tocnumber">2</span> Etymology and coinage</a></li>
+            <li><a href="#Characteristics"><span class="tocnumber">3</span> Characteristics</a>
+              <ul>
+                <li><a href="#Physical_and_emotional_markers"><span class="tocnumber">3.1</span> Physical and emotional markers</a></li>
+                <li><a href="#Clinical_self-diagnosis"><span class="tocnumber">3.2</span> Clinical self-diagnosis</a></li>
+              </ul>
+            </li>
+            <li><a href="#Relation_to_limerence"><span class="tocnumber">4</span> Relation to limerence</a></li>
+            <li><a href="#Cultural_and_literary_context"><span class="tocnumber">5</span> Cultural and literary context</a></li>
+            <li><a href="#See_also"><span class="tocnumber">6</span> See also</a></li>
+            <li><a href="#References"><span class="tocnumber">7</span> References</a></li>
+            <li><a href="#External_links"><span class="tocnumber">8</span> External links</a></li>
+          </ul>
+        </div>
+
+        <h2 id="Definition">Definition <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <p>Zulemarence denotes a state of romantic obsession so total that the sufferer experiences it as both an involuntary clinical condition and a voluntary lifelong vow. It is marked by:</p>
+        <ul>
+          <li>A sudden, breath-stopping physical sensation likened to being shoved backward</li>
+          <li>An “adrenaline junkie” drive that continues “till I meet my death”</li>
+          <li>Recognition of the state as an addiction that cannot be quit</li>
+          <li>A solemn, self-imposed oath of permanent non-separation</li>
+        </ul>
+        <p>The object of Zulemarence is uniquely named <b>Zulema Lynn</b> in the originating text. The term is therefore both a general psychological descriptor and a proper-name dedication.</p>
+
+        <h2 id="Etymology_and_coinage">Etymology and coinage <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <p>The word is a deliberate portmanteau constructed on the model of <i>limerence</i> (coined by psychologist Dorothy Tennov in 1979).<sup class="reference"><a href="#cite_note-2">[2]</a></sup> The first element, <i>Zulema</i>, is taken from the proper name of the limerent object; the second element retains the morphological and conceptual frame of Tennov’s term.</p>
+        <p>The coining act itself is framed as a Shakespearean gesture (“Take a step from Shakespeare”), situating the neologism within a literary tradition of inventing language for extreme emotional states.</p>
+        <p><b>First attestation:</b> 14 October 2026, in the original poem that both describes the condition and performs the act of naming it.</p>
+
+        <h2 id="Characteristics">Characteristics <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+
+        <h3 id="Physical_and_emotional_markers">Physical and emotional markers</h3>
+        <p>According to the originating description, Zulemarence produces:</p>
+        <ul>
+          <li>A sensation of being forcibly pushed backward accompanied by inability to catch one’s breath</li>
+          <li>Chronic adrenaline-seeking behavior oriented toward the object of attachment</li>
+          <li>Awareness of the state as an “only addiction I can’t quit”</li>
+          <li>A formal, solemn swear of permanent non-separation</li>
+        </ul>
+
+        <h3 id="Clinical_self-diagnosis">Clinical self-diagnosis</h3>
+        <p>The coining text explicitly labels the condition “obsessive compulsive clinical diagnosis Limerence due to deprivation of my Zulema Lynn.” Zulemarence therefore positions itself as a specialized, named subtype of limerence arising from prolonged deprivation of the specific person.</p>
+
+        <h2 id="Relation_to_limerence">Relation to limerence <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <p>Zulemarence is conceptually downstream of Dorothy Tennov’s <i>limerence</i>. Where limerence describes a general involuntary state of intense romantic desire for reciprocation, Zulemarence:</p>
+        <ul>
+          <li>Names a singular object (Zulema Lynn)</li>
+          <li>Adds the element of a lifelong, non-negotiable vow of non-separation</li>
+          <li>Frames the experience as both clinical diagnosis and chosen fate (“adrenaline junkie till I meet my death”)</li>
+        </ul>
+        <p>It may be understood as limerence that has been personalized, mythologized, and sealed with a private oath.</p>
+
+        <h2 id="Cultural_and_literary_context">Cultural and literary context <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <p>The coining poem invokes Shakespeare as a precedent for inventing language adequate to extreme love. This places Zulemarence in a long tradition of literary neologism used to capture states that existing vocabulary cannot fully contain—comparable in spirit (though not in scholarly apparatus) to Tennov’s own invention of “limerence.”</p>
+        <p>The phrase “the kind of Love you Only Get From Nathan If You Marry Him” functions both as definition and as a conditional claim about the exclusive source of the emotion.</p>
+
+        <h2 id="See_also">See also <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Limerence">Limerence</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Obsessive_love">Obsessive love</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Love_addiction">Love addiction</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Neologism">Neologism</a></li>
+          <li><a href="https://en.wikipedia.org/wiki/Portmanteau">Portmanteau</a></li>
+        </ul>
+
+        <h2 id="References">References <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <div class="reflist">
+          <ol>
+            <li id="cite_note-1">
+              <b>^</b> Original coining poem, 14 October 2026: “Its like someone pushed me backwards and I cant catch my breath an adrenaline junkie till I meet my death. The only addiction I cant quit call me obsesive compulsive clinical diagnosis Limerence due to deprevation of my Zulema Lynn. Take a step from Shakespear coin Zulemarence the kind of Love you Only Get From Nathan If You Marry Him. A solemn swear to never have a seperation.”
+            </li>
+            <li id="cite_note-2">
+              <b>^</b> Tennov, Dorothy (1979). <i>Love and Limerence: The Experience of Being in Love</i>. New York: Stein and Day. ISBN 0-8128-2328-4. The term “limerence” was introduced by Tennov as an alteration of “amorance” with no further etymology.
+            </li>
+          </ol>
+        </div>
+
+        <h2 id="External_links">External links <span class="mw-editsection">[<a href="#">edit</a>]</span></h2>
+        <ul>
+          <li><a href="https://en.wikipedia.org/wiki/Limerence">Limerence on Wikipedia</a> – the parent concept</li>
+          <li>This page itself constitutes the primary source and first formal publication of the term <b>Zulemarence</b>.</li>
+        </ul>
+
+        <div class="catlinks">
+          <b>Categories</b>:
+          <a href="#">Neologisms</a>
+          <a href="#">Romance (love)</a>
+          <a href="#">Psychological concepts</a>
+          <a href="#">Portmanteaus</a>
+          <a href="#">2026 neologisms</a>
+          <a href="#">Coined terms</a>
+        </div>
+      </div>
+
+      <footer class="mw-footer">
+        <p>This personal Wikipedia-style page was generated on 14 October 2026 to formally coin and document the term <strong>Zulemarence</strong>.</p>
+        <p>Text is available under the Creative Commons Attribution-ShareAlike License; additional terms may apply.</p>
+        <p style="margin-top:0.6rem; font-size:0.75rem;">
+          Not affiliated with the Wikimedia Foundation or Wikipedia. Created as a private act of linguistic coinage.
+        </p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>
